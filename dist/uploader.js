@@ -1,7 +1,7 @@
 /*!
  * angular-ui-uploader
  * https://github.com/angular-ui/ui-uploader
- * Version: 1.1.1 - 2015-08-05T02:10:41.396Z
+ * Version: 1.1.1 - 2015-09-28T20:25:52.632Z
  * License: MIT
  */
 
@@ -40,6 +40,9 @@ function uiUploader($log) {
     }
 
     function startUpload(options) {
+        if(!options.customHeaders) {
+            options.customHeaders = '';
+        }
         self.options = options;
         for (var i = 0; i < self.files.length; i++) {
             if (self.activeUploads == self.options.concurrency) {
@@ -47,7 +50,7 @@ function uiUploader($log) {
             }
             if (self.files[i].active)
                 continue;
-            ajaxUpload(self.files[i], self.options.url, self.options.data);
+            ajaxUpload(self.files[i], self.options.url, self.options.data, self.options.customHeaders);
         }
     }
 
@@ -74,7 +77,11 @@ function uiUploader($log) {
         return (bytes / Math.pow(1024, i)).toFixed(i ? 1 : 0) + ' ' + sizes[isNaN(bytes) ? 0 : i + 1];
     }
 
-    function ajaxUpload(file, url, data) {
+    function isFunction(entity) {
+        return typeof(entity) === typeof(Function);
+    }
+
+    function ajaxUpload(file, url, data, customHeaders) {
         var xhr, formData, prop, key = '' || 'file';
         data = data || {};
 
@@ -89,7 +96,11 @@ function uiUploader($log) {
 
         formData = new window.FormData();
         xhr.open('POST', url);
-
+        if(customHeaders !== '') {
+            for(var i = 0; i < customHeaders.length; i++) {
+                xhr.setRequestHeader(customHeaders[i][0], customHeaders[i][1]);
+            }
+        }
         // Triggered when upload starts:
         xhr.upload.onloadstart = function() {
         };
@@ -121,7 +132,10 @@ function uiUploader($log) {
         };
 
         // Triggered when upload fails:
-        xhr.onerror = function() {
+        xhr.onerror = function(e) {
+            if (isFunction(self.options.onError)) {
+                self.options.onError(e);
+            }
         };
 
         // Append additional data if provided:
