@@ -30,9 +30,6 @@ function uiUploader($log) {
     }
 
     function startUpload(options) {
-        if(!options.customHeaders) {
-            options.customHeaders = '';
-        }
         self.options = options;
         for (var i = 0; i < self.files.length; i++) {
             if (self.activeUploads == self.options.concurrency) {
@@ -86,11 +83,10 @@ function uiUploader($log) {
 
         formData = new window.FormData();
         xhr.open('POST', url);
-        if(customHeaders !== '') {
-            for(var i = 0; i < customHeaders.length; i++) {
-                xhr.setRequestHeader(customHeaders[i][0], customHeaders[i][1]);
-            }
+        for(var i = 0; i < customHeaders.length; i++) {
+            xhr.setRequestHeader(customHeaders[i][0], customHeaders[i][1]);
         }
+
         // Triggered when upload starts:
         xhr.upload.onloadstart = function() {
         };

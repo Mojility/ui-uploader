@@ -1,7 +1,7 @@
 /*!
  * angular-ui-uploader
  * https://github.com/angular-ui/ui-uploader
- * Version: 1.1.1 - 2015-09-28T20:25:52.632Z
+ * Version: 1.1.1 - 2015-09-29T03:49:59.673Z
  * License: MIT
  */
 
@@ -40,9 +40,6 @@ function uiUploader($log) {
     }
 
     function startUpload(options) {
-        if(!options.customHeaders) {
-            options.customHeaders = '';
-        }
         self.options = options;
         for (var i = 0; i < self.files.length; i++) {
             if (self.activeUploads == self.options.concurrency) {
@@ -96,11 +93,10 @@ function uiUploader($log) {
 
         formData = new window.FormData();
         xhr.open('POST', url);
-        if(customHeaders !== '') {
-            for(var i = 0; i < customHeaders.length; i++) {
-                xhr.setRequestHeader(customHeaders[i][0], customHeaders[i][1]);
-            }
+        for(var i = 0; i < customHeaders.length; i++) {
+            xhr.setRequestHeader(customHeaders[i][0], customHeaders[i][1]);
         }
+
         // Triggered when upload starts:
         xhr.upload.onloadstart = function() {
         };
