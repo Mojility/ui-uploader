@@ -1,7 +1,7 @@
 /*!
  * angular-ui-uploader
  * https://github.com/angular-ui/ui-uploader
- * Version: 1.1.1 - 2015-09-29T03:49:59.673Z
+ * Version: 1.1.2 - 2015-10-28T20:38:15.664Z
  * License: MIT
  */
 
@@ -112,7 +112,9 @@ function uiUploader($log) {
             //console.info(event.loaded);
             file.loaded = event.loaded;
             file.humanSize = getHumanSize(event.loaded);
-            self.options.onProgress(file);
+            if (isFunction(self.options.onProgress)) {
+                self.options.onProgress(file);
+            }
         };
 
         // Triggered when upload is completed:
@@ -120,10 +122,14 @@ function uiUploader($log) {
             self.activeUploads -= 1;
             self.uploadedFiles += 1;
             startUpload(self.options);
-            self.options.onCompleted(file, xhr.responseText, xhr.status);
+            if (isFunction(self.options.onCompleted)) {
+                self.options.onCompleted(file, xhr.responseText, xhr.status);
+            }            
             if (self.uploadedFiles === self.files.length) {
                 self.uploadedFiles = 0;
-                self.options.onCompletedAll(self.files);
+                if (isFunction(self.options.onCompletedAll)) {
+                    self.options.onCompletedAll(self.files);
+                }
             }
         };
 
